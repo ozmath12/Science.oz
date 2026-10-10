@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Science Galaxy — Misi Zat dan Kesehatan</title>
+
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        galaxy: {
+                            bg: '#0B1026',
+                            card: '#161B38',
+                            purple: '#6C3BCE',
+                            gold: '#FFD166',
+                            cyan: '#5DDCFF',
+                            green: '#55D6A7',
+                            coral: '#FF647C',
+                            text: '#F8FAFC'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0B1026;
+            color: #F8FAFC;
+            overflow-x: hidden;
+        }
+
+        /* Animated Space Background Stars */
+        .stars-bg {
+            background-image: 
+                radial-gradient(1.5px 1.5px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #5DDCFF, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 90px 40px, #FFD166, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #ffffff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: starMove 120s linear infinite;
+        }
+
+        @keyframes starMove {
+            from { background-position: 0 0; }
+            to { background-position: 1000px 1000px; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B1026;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6C3BCE;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5DDCFF;
+        }
+
+        /* Floating Animation for Science Graphics */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(3deg); }
+        }
+        .animate-float {
+            animation: floatSlow 6s ease-in-out infinite;
+        }
+
+        /* Active Navigation Tab Styling */
+        .nav-btn.active {
+            background: linear-gradient(135deg, #6C3BCE 0%, #4A24A2 100%);
+            color: #FFD166;
+            border-left: 4px solid #FFD166;
+            box-shadow: 0 4px 15px rgba(108, 59, 206, 0.4);
+        }
+
+        /* Drag and Drop Card Styles */
+        .draggable-item {
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+        }
+        .draggable-item:active {
+            cursor: grabbing;
+        }
+        .drop-target.highlight {
+            background-color: rgba(93, 220, 255, 0.2) !important;
+            border-color: #5DDCFF !important;
+            transform: scale(1.02);
+        }
+
+        /* Toast Animation */
+        @keyframes toastSlide {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .toast-animate {
+            animation: toastSlide 0.3s ease forwards;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, ::before, ::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row antialiased stars-bg selection:bg-galaxy-purple selection:text-white">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Mobile Top Bar -->
+    <header class="md:hidden bg-galaxy-card/90 backdrop-blur-md text-white p-4 flex justify-between items-center sticky top-0 z-40 border-b border-purple-900/50 shadow-lg">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-galaxy-purple to-galaxy-cyan flex items-center justify-center text-galaxy-gold font-bold text-lg shadow-md">
+                <i class="fa-solid fa-flask"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-base text-galaxy-gold leading-tight">Science Galaxy</h1>
+                <p class="text-xs text-galaxy-cyan">IPA Kelas IX SMP</p>
+            </div>
+        </div>
+        <button id="mobile-menu-btn" class="p-2 rounded-lg bg-galaxy-purple/40 text-galaxy-gold hover:bg-galaxy-purple border border-galaxy-purple/60 focus:outline-none" aria-label="Buka Menu">
+            <i class="fa-solid fa-bars text-xl"></i>
+        </button>
+    </header>
+
+    <!-- Sidebar Navigation (Desktop & Mobile Drawer) -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-galaxy-card/95 backdrop-blur-lg border-r border-purple-900/40 text-white flex flex-col justify-between transform -translate-x-full md:translate-x-0 md:static transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none shrink-0">
+        <div>
+            <!-- Sidebar Header -->
+            <div class="p-6 border-b border-purple-900/50 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-galaxy-purple via-indigo-600 to-galaxy-cyan flex items-center justify-center font-black text-xl text-galaxy-gold shadow-lg shadow-purple-900/50">
+                        <i class="fa-solid fa-atom text-2xl animate-spin-slow"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-extrabold text-base tracking-wide text-galaxy-gold">Science Galaxy</h2>
+                        <p class="text-[11px] text-galaxy-cyan">Zat Aditif & Adiktif</p>
+                    </div>
+                </div>
+                <button id="close-sidebar-btn" class="md:hidden text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="p-4 space-y-2" id="nav-menu">
+                <button onclick="navigateTo('home')" id="nav-home" class="nav-btn w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-sm text-slate-200 hover:bg-galaxy-purple/30 transition-all">
+                    <i class="fa-solid fa-rocket text-galaxy-gold w-5 text-center"></i>
+                    <span>Home (Pusat Misi)</span>
+                </button>
+
+                <button onclick="navigateTo('tujuan')" id="nav-tujuan" class="nav-btn w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-sm text-slate-200 hover:bg-galaxy-purple/30 transition-all">
+                    <i class="fa-solid fa-graduation-cap text-galaxy-cyan w-5 text-center"></i>
+                    <span>Tujuan Pembelajaran</span>
+                </button>
+
+                <button onclick="navigateTo('materi')" id="nav-materi" class="nav-btn w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-sm text-slate-200 hover:bg-galaxy-purple/30 transition-all">
+                    <i class="fa-solid fa-book-open text-galaxy-green w-5 text-center"></i>
+                    <span>Materi Pembelajaran</span>
+                </button>
+
+                <button onclick="navigateTo('kuis')" id="nav-kuis" class="nav-btn w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-sm text-slate-200 hover:bg-galaxy-purple/30 transition-all">
+                    <i class="fa-solid fa-vial-circle-check text-galaxy-gold w-5 text-center"></i>
+                    <span>Kuis Interaktif</span>
+                </button>
+
+                <button onclick="navigateTo('dragdrop')" id="nav-dragdrop" class="nav-btn w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-sm text-slate-200 hover:bg-galaxy-purple/30 transition-all">
+                    <i class="fa-solid fa-gamepad text-galaxy-cyan w-5 text-center"></i>
+                    <span>Lab Tantangan (Game)</span>
+                </button>
+
+                <button onclick="navigateTo('tentang')" id="nav-tentang" class="nav-btn w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl font-medium text-sm text-slate-200 hover:bg-galaxy-purple/30 transition-all">
+                    <i class="fa-solid fa-circle-info text-galaxy-coral w-5 text-center"></i>
+                    <span>Tentang Media</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Progress Widget Footer -->
+        <div class="p-4 m-4 bg-galaxy-purple/20 rounded-2xl border border-galaxy-purple/40 backdrop-blur-md">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs font-semibold text-galaxy-cyan flex items-center gap-1.5">
+                    <i class="fa-solid fa-chart-line text-galaxy-gold"></i> Progres Misi
+                </span>
+                <span id="sidebar-progress-text" class="text-xs font-bold text-galaxy-gold">0%</span>
+            </div>
+            <div class="w-full bg-galaxy-bg rounded-full h-2.5 p-0.5 border border-purple-900/60">
+                <div id="sidebar-progress-bar" class="bg-gradient-to-r from-galaxy-cyan via-galaxy-green to-galaxy-gold h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <p class="text-[11px] text-slate-300 mt-2 text-center font-medium" id="sidebar-badge-status">Status: Kadet Sains Antariksa</p>
+        </div>
+    </aside>
+
+    <!-- Overlay backdrop for mobile navigation -->
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden"></div>
+
+    <!-- Main Display Screen -->
+    <main class="flex-1 p-4 md:p-8 overflow-y-auto max-w-7xl mx-auto w-full">
+
+        <!-- ================= PAGE 1: HOME ================= -->
+        <section id="page-home" class="page-content space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative bg-gradient-to-br from-galaxy-card via-galaxy-purple/40 to-indigo-950/80 rounded-3xl p-6 md:p-10 border border-purple-800/50 shadow-2xl overflow-hidden">
+                <div class="absolute -right-12 -bottom-12 w-80 h-80 bg-galaxy-cyan/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute right-1/3 -top-10 w-60 h-60 bg-galaxy-gold/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-8 space-y-5">
+                        <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-galaxy-gold/20 text-galaxy-gold font-bold text-xs border border-galaxy-gold/40">
+                            <i class="fa-solid fa-star"></i> IPA Kelas IX SMP — Kurikulum Merdeka
+                        </span>
+                        <h1 class="text-3xl md:text-5xl font-black text-white leading-tight">
+                            Selamat Datang di <br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-galaxy-gold via-galaxy-cyan to-galaxy-green">Science Galaxy!</span>
+                        </h1>
+                        <p class="text-slate-300 text-sm md:text-base leading-relaxed max-w-2xl">
+                            Jelajahi dunia zat dalam makanan dan minuman, temukan rahasia zat aditif, serta pahami pengaruh zat adiktif terhadap kesehatan tubuh demi keputusan hidup yang lebih cerdas dan sehat!
+                        </p>
+
+                        <div class="flex flex-wrap gap-4 pt-2">
+                            <button onclick="navigateTo('materi')" class="px-6 py-3.5 bg-gradient-to-r from-galaxy-gold to-amber-500 hover:from-amber-400 hover:to-amber-600 text-galaxy-bg font-extrabold rounded-2xl shadow-lg shadow-amber-500/20 transition-all transform hover:-translate-y-0.5 flex items-center space-x-2.5">
+                                <i class="fa-solid fa-flask"></i>
+                                <span>Mulai Misi Sains</span>
+                            </button>
+                            <button onclick="navigateTo('kuis')" class="px-6 py-3.5 bg-galaxy-purple/40 hover:bg-galaxy-purple text-white font-bold rounded-2xl border border-galaxy-purple/60 backdrop-blur-md transition-all flex items-center space-x-2.5">
+                                <i class="fa-solid fa-vial-circle-check text-galaxy-cyan"></i>
+                                <span>Uji Pengetahuan</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Floating Hero Graphics -->
+                    <div class="lg:col-span-4 flex justify-center">
+                        <div class="relative w-56 h-56 md:w-64 md:h-64 rounded-3xl bg-galaxy-purple/30 border border-galaxy-cyan/30 flex items-center justify-center p-6 animate-float shadow-2xl">
+                            <i class="fa-solid fa-user-astronaut text-7xl text-galaxy-gold drop-shadow-[0_10px_20px_rgba(255,209,102,0.3)]"></i>
+                            <div class="absolute -top-3 -right-3 bg-galaxy-cyan text-galaxy-bg font-black text-xs px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-1">
+                                <i class="fa-solid fa-heart-pulse text-galaxy-coral"></i> Misi Kesehatan
+                            </div>
+                            <div class="absolute -bottom-3 -left-3 bg-galaxy-green text-galaxy-bg font-black text-xs px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-1">
+                                <i class="fa-solid fa-utensils"></i> Analisis Pangan
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Core Topic Preview Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Card 1: Zat Aditif -->
+                <div class="bg-galaxy-card/90 p-6 rounded-3xl border border-purple-800/40 hover:border-galaxy-cyan transition-all shadow-xl space-y-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-14 h-14 rounded-2xl bg-galaxy-cyan/20 text-galaxy-cyan flex items-center justify-center text-2xl border border-galaxy-cyan/40">
+                            <i class="fa-solid fa-utensils"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-galaxy-cyan uppercase tracking-wider">Modul 1</span>
+                            <h3 class="text-xl font-bold text-white">Zat Aditif Pangan</h3>
+                        </div>
+                    </div>
+                    <p class="text-slate-300 text-xs leading-relaxed">
+                        Mempelajari bahan pengawet, pemanis, pewarna, penyedap, pengental, dan aroma pada makanan. Ketahui perbedaan bahan alami vs sintetis serta cara membaca label kemasan pangan secara cermat.
+                    </p>
+                    <div class="flex items-center justify-between pt-2">
+                        <span class="text-xs text-galaxy-gold font-semibold"><i class="fa-solid fa-microscope mr-1"></i> Lab Makanan & Analisis Label</span>
+                        <button onclick="navigateTo('materi')" class="text-xs font-bold text-galaxy-cyan hover:underline">Pelajari &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- Card 2: Zat Adiktif -->
+                <div class="bg-galaxy-card/90 p-6 rounded-3xl border border-purple-800/40 hover:border-galaxy-coral transition-all shadow-xl space-y-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-14 h-14 rounded-2xl bg-galaxy-coral/20 text-galaxy-coral flex items-center justify-center text-2xl border border-galaxy-coral/40">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-galaxy-coral uppercase tracking-wider">Modul 2</span>
+                            <h3 class="text-xl font-bold text-white">Zat Adiktif & Kesehatan</h3>
+                        </div>
+                    </div>
+                    <p class="text-slate-300 text-xs leading-relaxed">
+                        Memahami zat yang menimbulkan ketergantungan (seperti nikotin, alkohol, dan zat psikoaktif). Pelajari dampaknya pada saraf, otak, organ tubuh, serta strategi menolak tekanan sebaya.
+                    </p>
+                    <div class="flex items-center justify-between pt-2">
+                        <span class="text-xs text-galaxy-gold font-semibold"><i class="fa-solid fa-shield-heart mr-1"></i> Sistem Saraf & Pilihan Sehat</span>
+                        <button onclick="navigateTo('materi')" class="text-xs font-bold text-galaxy-coral hover:underline">Pelajari &rarr;</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Science Challenge Banner -->
+            <div class="bg-gradient-to-r from-galaxy-purple/40 via-indigo-900/50 to-galaxy-card border border-galaxy-gold/30 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2 text-galaxy-gold font-bold text-xs uppercase tracking-wider">
+                        <i class="fa-solid fa-fire"></i> Tantangan Sains Hari Ini
+                    </div>
+                    <h3 class="text-lg font-extrabold text-white">Apakah Semua Bahan Sintetis Berbahaya?</h3>
+                    <p class="text-slate-300 text-xs max-w-xl">
+                        Tidak semua bahan sintetis berbahaya dan tidak semua bahan alami pasti aman! Keamanan pangan bergantung pada jenis zat, tingkat kemurnian, serta takaran penggunaannya.
+                    </p>
+                </div>
+                <button onclick="navigateTo('materi')" class="shrink-0 px-5 py-3 bg-galaxy-gold text-galaxy-bg font-extrabold text-xs rounded-xl hover:bg-amber-400 transition-all shadow-md">
+                    Temukan Jawabannya di Materi
+                </button>
+            </div>
+        </section>
+
+
+        <!-- ================= PAGE 2: TUJUAN PEMBELAJARAN ================= -->
+        <section id="page-tujuan" class="page-content space-y-8 hidden">
+            <div class="bg-galaxy-card p-6 md:p-8 rounded-3xl border border-purple-800/40 shadow-xl space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-purple-900/50 pb-6">
+                    <div>
+                        <div class="flex items-center gap-2 text-galaxy-cyan text-xs font-bold uppercase tracking-wider mb-1">
+                            <i class="fa-solid fa-graduation-cap"></i> Target Keterampilan
+                        </div>
+                        <h2 class="text-2xl font-black text-galaxy-gold">Tujuan Pembelajaran</h2>
+                        <p class="text-slate-300 text-xs mt-1">Centang setiap kriteria yang telah kamu kuasai selama menjelajahi materi ini!</p>
+                    </div>
+                    <div class="flex items-center gap-3 bg-galaxy-purple/30 px-4 py-3 rounded-2xl border border-galaxy-purple/50 shrink-0">
+                        <span class="text-xs font-semibold text-slate-200">Total Pencapaian:</span>
+                        <span id="obj-counter" class="text-lg font-black text-galaxy-gold">0 / 10</span>
+                    </div>
+                </div>
+
+                <!-- Checklist Grid -->
+                <div class="space-y-3" id="objectives-list">
+                    <!-- Dynamic rendering by JS -->
+                </div>
+
+                <div class="mt-8 p-4 bg-galaxy-purple/20 rounded-2xl border border-galaxy-purple/40 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-lightbulb text-galaxy-gold text-2xl"></i>
+                        <p class="text-xs text-slate-300">
+                            <strong>Tips Sains:</strong> Eksplorasi simulasi interaktif pada menu <em>Materi</em> sebelum mencentang seluruh target di atas!
+                        </p>
+                    </div>
+                    <button onclick="resetObjectives()" class="text-xs text-galaxy-coral hover:underline font-bold shrink-0">
+                        Reset Checklist
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= PAGE 3: MATERI PEMBELAJARAN ================= -->
+        <section id="page-materi" class="page-content space-y-8 hidden">
+            <!-- Module Switcher Tabs -->
+            <div class="flex p-1.5 bg-galaxy-card/90 rounded-2xl max-w-md mx-auto border border-purple-800/40 shadow-inner">
+                <button onclick="switchModule('modul1')" id="tab-modul1" class="flex-1 py-3 px-4 rounded-xl font-bold text-xs md:text-sm transition-all text-galaxy-gold bg-galaxy-purple shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-utensils"></i> Modul 1: Zat Aditif
+                </button>
+                <button onclick="switchModule('modul2')" id="tab-modul2" class="flex-1 py-3 px-4 rounded-xl font-bold text-xs md:text-sm transition-all text-slate-400 hover:text-white flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-brain"></i> Modul 2: Zat Adiktif
+                </button>
+            </div>
+
+            <!-- ================= SUB-MODULE 1: ZAT ADITIF ================= -->
+            <div id="materi-modul1" class="space-y-8">
+                <!-- 1. Definition Card -->
+                <div class="bg-galaxy-card p-6 md:p-8 rounded-3xl border border-purple-800/40 shadow-xl space-y-4">
+                    <span class="px-3 py-1 bg-galaxy-cyan/20 text-galaxy-cyan text-xs font-bold rounded-lg uppercase">Sub-Materi 1.1</span>
+                    <h3 class="text-xl font-extrabold text-galaxy-gold">Pengertian & Konsep Dasar Zat Aditif</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        <strong>Zat Aditif Pangan</strong> adalah bahan yang ditambahkan ke dalam makanan atau minuman selama proses pengolahan, penyimpanan, atau pengemasan untuk tujuan tertentu seperti memperpanjang masa simpan, memperbaiki warna, memperkuat rasa, aroma, atau membentuk tekstur.
+                    </p>
+
+                    <div class="p-4 bg-galaxy-purple/20 border border-galaxy-purple/40 rounded-2xl text-xs text-slate-200 space-y-2">
+                        <p class="text-galaxy-gold font-bold"><i class="fa-solid fa-shield-halved mr-1.5"></i> Prinsip Keamanan Pangan:</p>
+                        <p>Keamanan suatu zat aditif bergantung pada **jenis, kemurnian, dan takarannya** (Batas Maksimum Penggunaan/ADI - <em>Acceptable Daily Intake</em>). Bahan alami tidak otomatis pasti aman jika berlebihan, dan bahan sintetis teruji tidak otomatis berbahaya jika sesuai takaran resmi BPFOM.</p>
+                    </div>
+                </div>
+
+                <!-- 2. Types of Additives Cards Grid -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-extrabold text-galaxy-gold flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-galaxy-cyan"></i> 6 Jenis Utama Zat Aditif Pangan
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        <!-- Pewarna -->
+                        <div class="bg-galaxy-card/90 p-5 rounded-2xl border border-purple-800/40 space-y-3 hover:border-galaxy-gold transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-palette"></i>
+                            </div>
+                            <h4 class="font-bold text-white text-base">1. Pewarna</h4>
+                            <p class="text-slate-300 text-xs leading-relaxed">Memperbaiki atau memberi warna agar pangan tampak lebih menarik.</p>
+                            <div class="bg-galaxy-bg/60 p-3 rounded-xl text-[11px] space-y-1">
+                                <p><strong class="text-galaxy-cyan">Alami:</strong> Kunyit (kuning), Daun Suji (hijau), Karamel.</p>
+                                <p><strong class="text-galaxy-coral">Sintetis:</strong> Tartrazin (kuning), Tartrazin CI 19140.</p>
+                            </div>
+                        </div>
+
+                        <!-- Pemanis -->
+                        <div class="bg-galaxy-card/90 p-5 rounded-2xl border border-purple-800/40 space-y-3 hover:border-galaxy-gold transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-galaxy-gold flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-candy-cane"></i>
+                            </div>
+                            <h4 class="font-bold text-white text-base">2. Pemanis</h4>
+                            <p class="text-slate-300 text-xs leading-relaxed">Memberikan rasa manis pada produk makanan atau minuman.</p>
+                            <div class="bg-galaxy-bg/60 p-3 rounded-xl text-[11px] space-y-1">
+                                <p><strong class="text-galaxy-cyan">Alami:</strong> Gula pasir, Gula aren, Madu, Stevia.</p>
+                                <p><strong class="text-galaxy-coral">Sintetis:</strong> Aspartam, Sakarin, Siklamat.</p>
+                            </div>
+                        </div>
+
+                        <!-- Pengawet -->
+                        <div class="bg-galaxy-card/90 p-5 rounded-2xl border border-purple-800/40 space-y-3 hover:border-galaxy-gold transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-blue-500/20 text-galaxy-cyan flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-hourglass-half"></i>
+                            </div>
+                            <h4 class="font-bold text-white text-base">3. Pengawet</h4>
+                            <p class="text-slate-300 text-xs leading-relaxed">Menghambat pertumbuhan mikroba (bakteri/jamur) agar pangan tidak cepat busuk.</p>
+                            <div class="bg-galaxy-bg/60 p-3 rounded-xl text-[11px] space-y-1">
+                                <p><strong class="text-galaxy-cyan">Alami:</strong> Garam dapur (penggaraman), Gula pekat, Cuka.</p>
+                                <p><strong class="text-galaxy-coral">Sintetis:</strong> Natrium Benzoat, Kalium Sorbat.</p>
+                            </div>
+                        </div>
+
+                        <!-- Penyedap Rasa -->
+                        <div class="bg-galaxy-card/90 p-5 rounded-2xl border border-purple-800/40 space-y-3 hover:border-galaxy-gold transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-green-500/20 text-galaxy-green flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-bowl-food"></i>
+                            </div>
+                            <h4 class="font-bold text-white text-base">4. Penyedap Rasa</h4>
+                            <p class="text-slate-300 text-xs leading-relaxed">Memperkuat cita rasa gurih (umami) pada masakan.</p>
+                            <div class="bg-galaxy-bg/60 p-3 rounded-xl text-[11px] space-y-1">
+                                <p><strong class="text-galaxy-cyan">Alami:</strong> Kaldu tulang, Bawang, Rempah-rempah, Jamur.</p>
+                                <p><strong class="text-galaxy-coral">Sintetis:</strong> Monosodium Glutamat (MSG).</p>
+                            </div>
+                        </div>
+
+                        <!-- Pemberi Aroma -->
+                        <div class="bg-galaxy-card/90 p-5 rounded-2xl border border-purple-800/40 space-y-3 hover:border-galaxy-gold transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-300 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-lemon"></i>
+                            </div>
+                            <h4 class="font-bold text-white text-base">5. Pemberi Aroma</h4>
+                            <p class="text-slate-300 text-xs leading-relaxed">Memberikan wangi khas seperti buah atau vanilla pada olahan kue/minuman.</p>
+                            <div class="bg-galaxy-bg/60 p-3 rounded-xl text-[11px] space-y-1">
+                                <p><strong class="text-galaxy-cyan">Alami:</strong> Ekstrak vanilla, Perasan jeruk, Daun pandan.</p>
+                                <p><strong class="text-galaxy-coral">Sintetis:</strong> Amil Asetat (pisang), Etil Butirat (apel).</p>
+                            </div>
+                        </div>
+
+                        <!-- Pengental & Penstabil -->
+                        <div class="bg-galaxy-card/90 p-5 rounded-2xl border border-purple-800/40 space-y-3 hover:border-galaxy-gold transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-vial"></i>
+                            </div>
+                            <h4 class="font-bold text-white text-base">6. Pengental & Penstabil</h4>
+                            <p class="text-slate-300 text-xs leading-relaxed">Menstabilkan emulsi dan membentuk tekstur kenyal atau kental pada pangan.</p>
+                            <div class="bg-galaxy-bg/60 p-3 rounded-xl text-[11px] space-y-1">
+                                <p><strong class="text-galaxy-cyan">Contoh Alami:</strong> Tepung maizena, Gelatin, Agar-agar, Pektin.</p>
+                                <p><strong class="text-galaxy-coral">Sintetis:</strong> CMC (Carboxymethyl Cellulose).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Interactive Food Lab Simulator -->
+                <div class="bg-galaxy-card p-6 md:p-8 rounded-3xl border border-purple-800/40 shadow-xl space-y-6">
+                    <div>
+                        <span class="px-3 py-1 bg-galaxy-green/20 text-galaxy-green text-xs font-bold rounded-lg uppercase">Simulasi Interaktif</span>
+                        <h3 class="text-xl font-extrabold text-galaxy-gold mt-2"><i class="fa-solid fa-flask mr-2"></i> Laboratorium Sampel Pangan</h3>
+                        <p class="text-slate-300 text-xs mt-1">Pilih salah satu sampel produk di bawah ini untuk menganalisis komposisi aditifnya!</p>
+                    </div>
+
+                    <!-- Product Selector Buttons -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <button onclick="selectLabProduct('juicymango')" id="lab-btn-juicymango" class="p-3 bg-galaxy-purple/40 hover:bg-galaxy-purple rounded-2xl border border-galaxy-purple/60 text-xs font-bold text-white transition-all flex flex-col items-center gap-2">
+                            <i class="fa-solid fa-bottle-droplet text-galaxy-gold text-2xl"></i>
+                            <span>Minuman Jus Rasa Manga</span>
+                        </button>
+                        <button onclick="selectLabProduct('crispychips')" id="lab-btn-crispychips" class="p-3 bg-galaxy-purple/40 hover:bg-galaxy-purple rounded-2xl border border-galaxy-purple/60 text-xs font-bold text-white transition-all flex flex-col items-center gap-2">
+                            <i class="fa-solid fa-box text-galaxy-cyan text-2xl"></i>
+                            <span>Keripik Kentang Balado</span>
+                        </button>
+                        <button onclick="selectLabProduct('strawberrywafer')" id="lab-btn-strawberrywafer" class="p-3 bg-galaxy-purple/40 hover:bg-galaxy-purple rounded-2xl border border-galaxy-purple/60 text-xs font-bold text-white transition-all flex flex-col items-center gap-2">
+                            <i class="fa-solid fa-cookie text-pink-400 text-2xl"></i>
+                            <span>Wafer Krim Stroberi</span>
+                        </button>
+                        <button onclick="selectLabProduct('chilisauce')" id="lab-btn-chilisauce" class="p-3 bg-galaxy-purple/40 hover:bg-galaxy-purple rounded-2xl border border-galaxy-purple/60 text-xs font-bold text-white transition-all flex flex-col items-center gap-2">
+                            <i class="fa-solid fa-prescription-bottle text-galaxy-coral text-2xl"></i>
+                            <span>Saus Cabai Botol</span>
+                        </button>
+                    </div>
+
+                    <!-- Lab Product Analyzer Display Screen -->
+                    <div id="lab-display" class="p-6 bg-galaxy-bg/80 rounded-2xl border border-purple-900/60 space-y-4">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ================= SUB-MODULE 2: ZAT ADIKTIF ================= -->
+            <div id="materi-modul2" class="space-y-8 hidden">
+                <!-- 1. Definition Card -->
+                <div class="bg-galaxy-card p-6 md:p-8 rounded-3xl border border-purple-800/40 shadow-xl space-y-4">
+                    <span class="px-3 py-1 bg-galaxy-coral/20 text-galaxy-coral text-xs font-bold rounded-lg uppercase">Sub-Materi 2.1</span>
+                    <h3 class="text-xl font-extrabold text-galaxy-gold">Pengertian & Sifat Zat Adiktif</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        <strong>Zat Adiktif</strong> adalah bahan aktif yang apabila dikonsumsi oleh organisme hidup dapat menyebabkan ketergantungan fisik dan psikologis (adiksi) yang sulit dihentikan.
+                    </p>
+
+                    <div class="p-4 bg-galaxy-coral/10 border border-galaxy-coral/30 rounded-2xl text-xs text-slate-200 space-y-2">
+                        <p class="text-galaxy-coral font-bold"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i> Perbedaan Penting:</p>
+                        <p>Jangan tertukar antara <strong>Zat Aditif</strong> (ditambahkan pada pangan untuk mutu rasa/warna) dengan <strong>Zat Adiktif</strong> (bahan pemicu ketergantungan pada sistem saraf dan otak)!</p>
+                    </div>
+                </div>
+
+                <!-- 2. Types of Addictive Substances -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Nikotin -->
+                    <div class="bg-galaxy-card/90 p-6 rounded-3xl border border-purple-800/40 space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-galaxy-coral/20 text-galaxy-coral flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-smoking"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-base">1. Nikotin</h4>
+                        <p class="text-slate-300 text-xs leading-relaxed">Ditemukan pada rokok dan produk tembakau. Menyebabkan pemacu jantung mendadak, penyempitan pembuluh darah, serta ketergantungan kuat.</p>
+                    </div>
+
+                    <!-- Alkohol -->
+                    <div class="bg-galaxy-card/90 p-6 rounded-3xl border border-purple-800/40 space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-galaxy-gold/20 text-galaxy-gold flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-wine-glass"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-base">2. Alkohol (Etanol)</h4>
+                        <p class="text-slate-300 text-xs leading-relaxed">Menekan fungsi saraf pusat (depresan), memperlambat respons otak, mengganggu koordinasi gerak, serta merusak organ hati (sirosis).</p>
+                    </div>
+
+                    <!-- Obat Psikotropika & Resep -->
+                    <div class="bg-galaxy-card/90 p-6 rounded-3xl border border-purple-800/40 space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-galaxy-cyan/20 text-galaxy-cyan flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-pills"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-base">3. Penyalahgunaan Obat</h4>
+                        <p class="text-slate-300 text-xs leading-relaxed">Penggunaan obat penenang atau anti-nyeri medis di luar resep resep dokter resmi dapat memicu kecanduan berat dan kegagalan organ.</p>
+                    </div>
+                </div>
+
+                <!-- 3. Health & Brain Organ Visualizer -->
+                <div class="bg-galaxy-card p-6 md:p-8 rounded-3xl border border-purple-800/40 shadow-xl space-y-6">
+                    <div>
+                        <span class="px-3 py-1 bg-galaxy-coral/20 text-galaxy-coral text-xs font-bold rounded-lg uppercase">Visualisasi Dampak Kesehatan</span>
+                        <h3 class="text-xl font-extrabold text-galaxy-gold mt-2"><i class="fa-solid fa-heart-pulse mr-2"></i> Pengaruh Terhadap Organ Tubuh</h3>
+                        <p class="text-slate-300 text-xs mt-1">Klik ikon organ di bawah ini untuk melihat bagaimana zat adiktif mempengaruhi kinerjanya!</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button onclick="inspectOrgan('brain')" id="organ-btn-brain" class="p-4 bg-galaxy-purple/30 hover:bg-galaxy-purple rounded-2xl border border-galaxy-purple/50 text-center space-y-2 transition-all">
+                            <i class="fa-solid fa-brain text-4xl text-galaxy-cyan block"></i>
+                            <span class="font-bold text-xs text-white">Otak & Saraf</span>
+                        </button>
+                        <button onclick="inspectOrgan('lungs')" id="organ-btn-lungs" class="p-4 bg-galaxy-purple/30 hover:bg-galaxy-purple rounded-2xl border border-galaxy-purple/50 text-center space-y-2 transition-all">
+                            <i class="fa-solid fa-lungs text-4xl text-galaxy-coral block"></i>
+                            <span class="font-bold text-xs text-white">Paru-Paru</span>
+                        </button>
+                        <button onclick="inspectOrgan('heart')" id="organ-btn-heart" class="p-4 bg-galaxy-purple/30 hover:bg-galaxy-purple rounded-2xl border border-galaxy-purple/50 text-center space-y-2 transition-all">
+                            <i class="fa-solid fa-heart-pulse text-4xl text-pink-500 block"></i>
+                            <span class="font-bold text-xs text-white">Jantung & Darah</span>
+                        </button>
+                        <button onclick="inspectOrgan('liver')" id="organ-btn-liver" class="p-4 bg-galaxy-purple/30 hover:bg-galaxy-purple rounded-2xl border border-galaxy-purple/50 text-center space-y-2 transition-all">
+                            <i class="fa-solid fa-shield-virus text-4xl text-galaxy-gold block"></i>
+                            <span class="font-bold text-xs text-white">Hati / Liver</span>
+                        </button>
+                    </div>
+
+                    <div id="organ-display" class="p-6 bg-galaxy-bg/80 rounded-2xl border border-purple-900/60 text-xs text-slate-200 leading-relaxed">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- 4. Peer Pressure Decision Simulator -->
+                <div class="bg-galaxy-card p-6 md:p-8 rounded-3xl border border-purple-800/40 shadow-xl space-y-6">
+                    <div>
+                        <span class="px-3 py-1 bg-galaxy-gold/20 text-galaxy-gold text-xs font-bold rounded-lg uppercase">Simulasi Pengambilan Keputusan</span>
+                        <h3 class="text-xl font-extrabold text-galaxy-gold mt-2"><i class="fa-solid fa-shield-heart mr-2"></i> Strategi Menghadapi Tekanan Sebaya</h3>
+                        <p class="text-slate-300 text-xs mt-1">Uji keterampilanmu dalam mengambil keputusan sehat saat diajak mencoba zat berbahaya!</p>
+                    </div>
+
+                    <div class="p-5 bg-galaxy-purple/20 border border-galaxy-purple/40 rounded-2xl space-y-4">
+                        <p class="text-xs font-bold text-galaxy-gold">Skenario:</p>
+                        <p class="text-xs md:text-sm text-slate-200 italic">"Teman-teman sekelompok nongkrong mengajakmu mencoba rokok/vape dan mengejekmu 'tidak gaul' jika menolaknya. Apa respons terbaikmu?"</p>
+
+                        <div class="space-y-2 pt-2">
+                            <button onclick="choosePeerScenario(1)" class="w-full text-left p-3 rounded-xl bg-galaxy-bg hover:bg-galaxy-purple/50 text-xs font-semibold text-slate-200 border border-purple-800/50 transition-all flex items-center justify-between">
+                                <span>A. Ikut mencoba sedikit agar tidak diejek teman.</span>
+                                <i class="fa-solid fa-chevron-right text-galaxy-cyan"></i>
+                            </button>
+                            <button onclick="choosePeerScenario(2)" class="w-full text-left p-3 rounded-xl bg-galaxy-bg hover:bg-galaxy-purple/50 text-xs font-semibold text-slate-200 border border-purple-800/50 transition-all flex items-center justify-between">
+                                <span>B. Menolak dengan tegas dan sopan, lalu mengalihkan ke aktivitas positif lain (olahraga/game).</span>
+                                <i class="fa-solid fa-chevron-right text-galaxy-cyan"></i>
+                            </button>
+                            <button onclick="choosePeerScenario(3)" class="w-full text-left p-3 rounded-xl bg-galaxy-bg hover:bg-galaxy-purple/50 text-xs font-semibold text-slate-200 border border-purple-800/50 transition-all flex items-center justify-between">
+                                <span>C. Diam saja dan menerima rokok tersebut tanpa meminum/menghisapnya.</span>
+                                <i class="fa-solid fa-chevron-right text-galaxy-cyan"></i>
+                            </button>
+                        </div>
+
+                        <div id="peer-feedback" class="hidden p-4 rounded-xl text-xs font-medium space-y-1">
+                            <!-- Feedback by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= PAGE 4: KUIS INTERAKTIF ================= -->
+        <section id="page-kuis" class="page-content space-y-8 hidden">
+            <div class="bg-galaxy-card rounded-3xl p-6 md:p-8 border border-purple-800/40 shadow-xl max-w-3xl mx-auto space-y-6">
+                <!-- Quiz Header -->
+                <div id="quiz-header" class="flex justify-between items-center pb-4 border-b border-purple-900/50">
+                    <div>
+                        <span class="text-xs font-bold text-galaxy-cyan uppercase tracking-wider">Evaluasi Misi Sains</span>
+                        <h2 id="quiz-step-title" class="text-xl font-black text-galaxy-gold">Soal 1 dari 10</h2>
+                    </div>
+                    <div class="flex items-center gap-2 bg-galaxy-purple/30 px-3 py-1.5 rounded-xl border border-galaxy-purple/50">
+                        <span class="text-xs font-semibold text-slate-300">Skor:</span>
+                        <span id="quiz-score-badge" class="px-2.5 py-0.5 bg-galaxy-green text-galaxy-bg font-extrabold text-sm rounded-lg">0</span>
+                    </div>
+                </div>
+
+                <!-- Active Question Screen -->
+                <div id="quiz-question-box" class="space-y-6">
+                    <p id="quiz-question-text" class="text-base font-bold text-white leading-relaxed">
+                        <!-- Dynamic Question Text -->
+                    </p>
+
+                    <!-- Options Grid -->
+                    <div id="quiz-options-container" class="space-y-3">
+                        <!-- Generated by JS -->
+                    </div>
+
+                    <!-- Explanation Feedback Box -->
+                    <div id="quiz-explanation-box" class="hidden p-4 rounded-2xl bg-galaxy-purple/20 border border-galaxy-purple/50 space-y-2">
+                        <div class="flex items-center gap-2">
+                            <span id="quiz-feedback-icon" class="text-xl">✅</span>
+                            <strong id="quiz-feedback-text" class="text-sm font-bold text-white">Jawaban Benar!</strong>
+                        </div>
+                        <p id="quiz-explanation-text" class="text-xs text-slate-300 leading-relaxed">
+                            <!-- Explanation text -->
+                        </p>
+                    </div>
+
+                    <!-- Next Button -->
+                    <div class="flex justify-end pt-4 border-t border-purple-900/50">
+                        <button id="quiz-next-btn" onclick="nextQuestion()" disabled class="px-6 py-3 bg-slate-700 text-slate-400 cursor-not-allowed font-bold text-xs rounded-xl transition-all">
+                            Soal Berikutnya &rarr;
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quiz Completion Screen -->
+                <div id="quiz-result-box" class="hidden text-center py-8 space-y-6">
+                    <div class="w-24 h-24 bg-gradient-to-tr from-galaxy-gold to-amber-500 text-galaxy-bg rounded-full flex items-center justify-center text-4xl mx-auto shadow-2xl shadow-amber-500/30">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-black text-white">Misi Kuis Selesai!</h3>
+                        <p class="text-slate-300 text-xs mt-1">Berikut adalah hasil evaluasi belajarmu:</p>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4 max-w-sm mx-auto">
+                        <div class="p-4 bg-galaxy-bg rounded-2xl border border-purple-900/60">
+                            <span id="res-score" class="text-2xl font-black text-galaxy-gold block">0</span>
+                            <span class="text-[10px] uppercase font-bold text-slate-400">Total Skor</span>
+                        </div>
+                        <div class="p-4 bg-galaxy-bg rounded-2xl border border-purple-900/60">
+                            <span id="res-correct" class="text-2xl font-black text-galaxy-green block">0</span>
+                            <span class="text-[10px] uppercase font-bold text-slate-400">Benar</span>
+                        </div>
+                        <div class="p-4 bg-galaxy-bg rounded-2xl border border-purple-900/60">
+                            <span id="res-wrong" class="text-2xl font-black text-galaxy-coral block">0</span>
+                            <span class="text-[10px] uppercase font-bold text-slate-400">Salah</span>
+                        </div>
+                    </div>
+
+                    <div id="res-badge-msg" class="text-xs font-semibold text-galaxy-gold bg-galaxy-purple/30 p-4 rounded-2xl border border-galaxy-purple/50 max-w-md mx-auto">
+                        Hebat! Kamu telah menyelesaikan tantangan kuis ini!
+                    </div>
+
+                    <div class="flex justify-center gap-4 pt-4">
+                        <button onclick="restartQuiz()" class="px-5 py-3 bg-galaxy-cyan text-galaxy-bg font-extrabold text-xs rounded-xl shadow transition-all">
+                            Ulangi Kuis
+                        </button>
+                        <button onclick="navigateTo('dragdrop')" class="px-5 py-3 bg-galaxy-gold text-galaxy-bg font-extrabold text-xs rounded-xl shadow transition-all">
+                            Coba Lab Tantangan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= PAGE 5: DRAG AND DROP GAMES ================= -->
+        <section id="page-dragdrop" class="page-content space-y-8 hidden">
+            <div class="bg-galaxy-card rounded-3xl p-6 md:p-8 border border-purple-800/40 shadow-xl space-y-8">
+                <div>
+                    <h2 class="text-2xl font-black text-galaxy-gold">Lab Tantangan Interaktif</h2>
+                    <p class="text-slate-300 text-xs mt-1">Seret kartu ke posisi yang benar atau sentuh/klik kartu lalu sentuh kotaknya!</p>
+                </div>
+
+                <!-- Game Switcher Tabs -->
+                <div class="flex gap-2 border-b border-purple-900/50 overflow-x-auto pb-2">
+                    <button onclick="switchGame(1)" id="gtab-1" class="px-4 py-2 rounded-xl text-xs font-bold bg-galaxy-purple text-galaxy-gold transition-all shrink-0">
+                        Tantangan 1: Kelompokkan Zat Aditif
+                    </button>
+                    <button onclick="switchGame(2)" id="gtab-2" class="px-4 py-2 rounded-xl text-xs font-bold bg-galaxy-bg text-slate-400 hover:text-white transition-all shrink-0">
+                        Tantangan 2: Jodohkan Fungsi
+                    </button>
+                    <button onclick="switchGame(3)" id="gtab-3" class="px-4 py-2 rounded-xl text-xs font-bold bg-galaxy-bg text-slate-400 hover:text-white transition-all shrink-0">
+                        Tantangan 3: Keputusan Sehat
+                    </button>
+                </div>
+
+                <!-- GAME 1: CATEGORIZE ADDITIVES -->
+                <div id="game-1" class="space-y-6">
+                    <p class="text-xs font-bold text-slate-300">Pindahkan kartu sampel bahan di bawah ini ke dalam wadah jenis zat aditif yang tepat:</p>
+
+                    <!-- Unsorted Cards Source Area -->
+                    <div class="p-4 bg-galaxy-bg/80 rounded-2xl border border-purple-900/60 min-h-[80px] flex flex-wrap gap-3" id="g1-sources">
+                        <!-- Generated by JS -->
+                    </div>
+
+                    <!-- Target Bins -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 bg-galaxy-purple/20 border-2 border-dashed border-pink-500/50 rounded-2xl min-h-[150px] drop-target" id="g1-bin-pewarna" data-bin="pewarna">
+                            <h5 class="font-bold text-xs text-pink-400 mb-2 text-center"><i class="fa-solid fa-palette mr-1"></i> Pewarna</h5>
+                            <div class="space-y-2 card-container"></div>
+                        </div>
+
+                        <div class="p-4 bg-galaxy-purple/20 border-2 border-dashed border-galaxy-gold/50 rounded-2xl min-h-[150px] drop-target" id="g1-bin-pemanis" data-bin="pemanis">
+                            <h5 class="font-bold text-xs text-galaxy-gold mb-2 text-center"><i class="fa-solid fa-candy-cane mr-1"></i> Pemanis</h5>
+                            <div class="space-y-2 card-container"></div>
+                        </div>
+
+                        <div class="p-4 bg-galaxy-purple/20 border-2 border-dashed border-galaxy-cyan/50 rounded-2xl min-h-[150px] drop-target" id="g1-bin-pengawet" data-bin="pengawet">
+                            <h5 class="font-bold text-xs text-galaxy-cyan mb-2 text-center"><i class="fa-solid fa-hourglass-half mr-1"></i> Pengawet</h5>
+                            <div class="space-y-2 card-container"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-4">
+                        <button onclick="checkGame1()" class="px-5 py-2.5 bg-galaxy-green text-galaxy-bg font-extrabold text-xs rounded-xl shadow transition-all">
+                            Periksa Jawaban
+                        </button>
+                        <button onclick="resetGame1()" class="text-xs text-slate-400 underline hover:text-white">
+                            Ulangi Game 1
+                        </button>
+                    </div>
+                </div>
+
+                <!-- GAME 2: MATCH FUNCTIONS -->
+                <div id="game-2" class="space-y-6 hidden">
+                    <p class="text-xs font-bold text-slate-300">Pasangkan nama zat aditif di sebelah kiri dengan deskripsi fungsinya yang sesuai:</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Left Cards Source -->
+                        <div class="space-y-3" id="g2-items">
+                            <!-- Cards -->
+                        </div>
+
+                        <!-- Right Drop Targets -->
+                        <div class="space-y-3" id="g2-targets">
+                            <!-- Targets -->
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-4">
+                        <button onclick="checkGame2()" class="px-5 py-2.5 bg-galaxy-green text-galaxy-bg font-extrabold text-xs rounded-xl shadow transition-all">
+                            Periksa Pasangan
+                        </button>
+                        <button onclick="resetGame2()" class="text-xs text-slate-400 underline hover:text-white">
+                            Ulangi Game 2
+                        </button>
+                    </div>
+                </div>
+
+                <!-- GAME 3: HEALTHY CHOICES -->
+                <div id="game-3" class="space-y-6 hidden">
+                    <p class="text-xs font-bold text-slate-300">Kelompokkan tindakan berikut ke dalam **Perilaku Sehat** atau **Risiko Bahaya**:</p>
+
+                    <div class="p-4 bg-galaxy-bg/80 rounded-2xl border border-purple-900/60 min-h-[80px] flex flex-wrap gap-3" id="g3-sources">
+                        <!-- Cards -->
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-4 bg-galaxy-purple/20 border-2 border-dashed border-galaxy-green/50 rounded-2xl min-h-[160px] drop-target" id="g3-bin-sehat" data-bin="sehat">
+                            <h5 class="font-bold text-xs text-galaxy-green mb-2 text-center"><i class="fa-solid fa-shield-heart mr-1"></i> Perilaku Sehat</h5>
+                            <div class="space-y-2 card-container"></div>
+                        </div>
+
+                        <div class="p-4 bg-galaxy-purple/20 border-2 border-dashed border-galaxy-coral/50 rounded-2xl min-h-[160px] drop-target" id="g3-bin-bahaya" data-bin="bahaya">
+                            <h5 class="font-bold text-xs text-galaxy-coral mb-2 text-center"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Risiko Bahaya</h5>
+                            <div class="space-y-2 card-container"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-4">
+                        <button onclick="checkGame3()" class="px-5 py-2.5 bg-galaxy-green text-galaxy-bg font-extrabold text-xs rounded-xl shadow transition-all">
+                            Periksa Klasifikasi
+                        </button>
+                        <button onclick="resetGame3()" class="text-xs text-slate-400 underline hover:text-white">
+                            Ulangi Game 3
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= PAGE 6: TENTANG MEDIA ================= -->
+        <section id="page-tentang" class="page-content space-y-8 hidden">
+            <div class="bg-galaxy-card rounded-3xl p-6 md:p-8 border border-purple-800/40 shadow-xl max-w-3xl mx-auto space-y-6">
+                <div class="flex items-center space-x-4 border-b border-purple-900/50 pb-6">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-galaxy-purple to-galaxy-cyan flex items-center justify-center font-black text-2xl text-galaxy-gold shadow-lg">
+                        <i class="fa-solid fa-atom"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-black text-galaxy-gold">Science Galaxy</h2>
+                        <p class="text-xs text-slate-300">Media Pembelajaran Digital Interaktif IPA SMP Kelas IX</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div class="p-4 bg-galaxy-bg rounded-2xl border border-purple-900/60 space-y-1">
+                        <strong class="text-slate-400 uppercase tracking-wider block">Mata Pelajaran</strong>
+                        <span class="font-bold text-white text-sm">Ilmu Pengetahuan Alam (IPA)</span>
+                    </div>
+                    <div class="p-4 bg-galaxy-bg rounded-2xl border border-purple-900/60 space-y-1">
+                        <strong class="text-slate-400 uppercase tracking-wider block">Materi Utama</strong>
+                        <span class="font-bold text-white text-sm">Zat Aditif & Zat Adiktif</span>
+                    </div>
+                    <div class="p-4 bg-galaxy-bg rounded-2xl border border-purple-900/60 space-y-1">
+                        <strong class="text-slate-400 uppercase tracking-wider block">Target Pengguna</strong>
+                        <span class="font-bold text-white text-sm">Siswa SMP / MTs Kelas IX</span>
+                    </div>
+                    <div class="p-4 bg-galaxy-bg rounded-2xl border border-purple-900/60 space-y-1">
+                        <strong class="text-slate-400 uppercase tracking-wider block">Pengembang Utama</strong>
+                        <span class="font-bold text-galaxy-cyan text-sm">Achmad Fauzan Al Akbar</span>
+                    </div>
+                </div>
+
+                <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
+                    <h4 class="font-bold text-white text-sm">Petunjuk Penggunaan Media:</h4>
+                    <ul class="list-disc list-inside space-y-1.5 text-slate-300">
+                        <li>Gunakan sidebar navigasi untuk menjelajahi 6 menu utama secara lancar.</li>
+                        <li>Gunakan menu <strong>Materi</strong> untuk mempelajari modul interaktif, menganalisis komposisi pangan pada simulasi laboratorium, serta memeriksa pengaruh zat pada organ tubuh.</li>
+                        <li>Selesaikan <strong>Kuis Interaktif</strong> 10 soal untuk menguji pemahaman ilmiahmu.</li>
+                        <li>Latihlah pemahamanmu melalui game <strong>Lab Tantangan</strong> (dapat menggunakan drag-and-drop atau klik/ketuk).</li>
+                        <li>Seluruh progres belajar tersimpan secara otomatis di peramban web kamu.</li>
+                    </ul>
+                </div>
+
+                <div class="p-4 bg-galaxy-purple/20 rounded-2xl border border-galaxy-purple/40 text-center">
+                    <p class="text-xs font-semibold text-galaxy-gold italic">
+                        "Sains mengajarkan kita untuk berpikir kritis dan teliti demi menjaga kesehatan tubuh dan membuat keputusan hidup yang tepat!"
+                    </p>
+                </div>
+
+                <div class="pt-4 border-t border-purple-900/50 flex justify-between items-center">
+                    <button onclick="confirmResetAll()" class="px-4 py-2 bg-galaxy-coral/20 hover:bg-galaxy-coral/40 text-galaxy-coral font-bold text-xs rounded-xl border border-galaxy-coral/40 transition-all">
+                        Reset Seluruh Progres
+                    </button>
+                    <span class="text-[11px] text-slate-500">Versi 1.0.0 &bull; Single-File Web App</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        /* ================= STATE MANAGEMENT & LOCAL STORAGE ================= */
+        const DEFAULT_STATE = {
+            activeTab: 'home',
+            objectives: [false, false, false, false, false, false, false, false, false, false],
+            quizScore: 0,
+            completedQuiz: false
+        };
+
+        let state = JSON.parse(localStorage.getItem('science_galaxy_state')) || DEFAULT_STATE;
+
+        function saveState() {
+            localStorage.setItem('science_galaxy_state', JSON.stringify(state));
+            updateOverallProgress();
+        }
+
+        const OBJECTIVES_DATA = [
+            "Menjelaskan pengertian zat aditif dan zat adiktif.",
+            "Membedakan fungsi zat aditif makanan dari sifat zat adiktif.",
+            "Mengidentifikasi jenis-jenis zat aditif pangan.",
+            "Menjelaskan fungsi pewarna, pemanis, pengawet, penyedap, aroma, dan pengental.",
+            "Membedakan contoh bahan aditif alami dan sintetis.",
+            "Membaca informasi komposisi pada label produk makanan/minuman.",
+            "Menjelaskan pengertian dan contoh zat adiktif.",
+            "Memahami pengaruh zat adiktif terhadap sistem saraf dan organ tubuh.",
+            "Mengidentifikasi risiko penggunaan nikotin, alkohol, dan obat terlarang.",
+            "Menunjukkan sikap bertanggung jawab dalam memilih makanan dan perilaku sehat."
+        ];
+
+
+        /* ================= NAVIGATION SPA LOGIC ================= */
+        function navigateTo(sectionId) {
+            document.querySelectorAll('.page-content').forEach(el => el.classList.add('hidden'));
+
+            const target = document.getElementById(`page-${sectionId}`);
+            if (target) {
+                target.classList.remove('hidden');
+            }
+
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById(`nav-${sectionId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+
+            state.activeTab = sectionId;
+            saveState();
+            closeSidebar();
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            sidebar.classList.remove('-translate-x-full');
+            backdrop.classList.remove('hidden');
+        });
+
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            backdrop.classList.add('hidden');
+        }
+
+        document.getElementById('close-sidebar-btn').addEventListener('click', closeSidebar);
+        backdrop.addEventListener('click', closeSidebar);
+
+
+        /* ================= TOAST NOTIFICATION UTILITY ================= */
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+
+            const bgClass = type === 'success' ? 'bg-galaxy-green text-galaxy-bg' : type === 'error' ? 'bg-galaxy-coral text-white' : 'bg-galaxy-purple text-white';
+
+            toast.className = `${bgClass} px-4 py-3 rounded-2xl shadow-2xl text-xs font-bold flex items-center gap-2 pointer-events-auto toast-animate border border-white/20`;
+            toast.innerHTML = `
+                <i class="fa-solid ${type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-triangle-exclamation' : 'fa-circle-info'} text-base"></i>
+                <span>${message}</span>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+
+        /* ================= PAGE 2: OBJECTIVES LOGIC ================= */
+        function renderObjectives() {
+            const container = document.getElementById('objectives-list');
+            container.innerHTML = '';
+
+            OBJECTIVES_DATA.forEach((text, index) => {
+                const isChecked = state.objectives[index];
+                const item = document.createElement('div');
+                item.className = `p-4 rounded-2xl border transition-all flex items-center justify-between cursor-pointer ${
+                    isChecked ? 'bg-galaxy-green/20 border-galaxy-green/50' : 'bg-galaxy-bg/60 border-purple-900/60 hover:border-galaxy-purple'
+                }`;
+                item.onclick = () => toggleObjective(index);
+
+                item.innerHTML = `
+                    <div class="flex items-center space-x-3 pr-4">
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} class="w-5 h-5 rounded accent-galaxy-green cursor-pointer">
+                        <span class="text-xs md:text-sm font-medium ${isChecked ? 'text-galaxy-green line-through' : 'text-slate-200'}">
+                            ${index + 1}. ${text}
+                        </span>
+                    </div>
+                    <span class="text-xs font-bold shrink-0 ${isChecked ? 'text-galaxy-green' : 'text-slate-500'}">
+                        ${isChecked ? 'Tercapai' : 'Belum'}
+                    </span>
+                `;
+                container.appendChild(item);
+            });
+
+            const checkedCount = state.objectives.filter(Boolean).length;
+            document.getElementById('obj-counter').innerText = `${checkedCount} / ${OBJECTIVES_DATA.length}`;
+        }
+
+        function toggleObjective(index) {
+            state.objectives[index] = !state.objectives[index];
+            renderObjectives();
+            saveState();
+            showToast(state.objectives[index] ? 'Target ditandai tercapai!' : 'Status target diperbarui');
+        }
+
+        function resetObjectives() {
+            state.objectives = state.objectives.map(() => false);
+            renderObjectives();
+            saveState();
+            showToast('Checklist target telah direset.');
+        }
+
+
+        /* ================= PAGE 3: MATERI & SIMULATORS ================= */
+        function switchModule(modulId) {
+            document.getElementById('materi-modul1').classList.add('hidden');
+            document.getElementById('materi-modul2').classList.add('hidden');
+
+            document.getElementById('tab-modul1').className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs md:text-sm transition-all text-slate-400 hover:text-white flex items-center justify-center gap-2";
+            document.getElementById('tab-modul2').className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs md:text-sm transition-all text-slate-400 hover:text-white flex items-center justify-center gap-2";
+
+            document.getElementById(`materi-${modulId}`).classList.remove('hidden');
+            const activeTab = document.getElementById(`tab-${modulId}`);
+            activeTab.className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs md:text-sm transition-all text-galaxy-gold bg-galaxy-purple shadow-md flex items-center justify-center gap-2";
+        }
+
+        /* Food Lab Simulator Data */
+        const LAB_PRODUCTS = {
+            juicymango: {
+                title: "Minuman Jus Rasa Mangga",
+                icon: "fa-bottle-droplet",
+                color: "text-galaxy-gold",
+                ingredients: [
+                    { name: "Air & Konsentrat Mangga", type: "Bahan Utama Alami", desc: "Memberikan nutrisi dasar dan cita rasa buah." },
+                    { name: "Gula Pasir & Aspartam", type: "Pemanis Kombinasi", desc: "Gula (Alami) + Aspartam (Sintetis) untuk mengontrol tingkat kalori minuman." },
+                    { name: "Tartrazin (CI 19140)", type: "Pewarna Sintetis", desc: "Memberikan warna kuning cerah segar yang stabil." },
+                    { name: "Natrium Benzoat", type: "Pengawet Sintetis", desc: "Menghambat jamur dan bakteri agar jus bertahan lebih lama di kemasan." }
+                ]
+            },
+            crispychips: {
+                title: "Keripik Kentang Balado",
+                icon: "fa-box",
+                color: "text-galaxy-cyan",
+                ingredients: [
+                    { name: "Kentang Segar & Minyak Sawit", type: "Bahan Utama Alami", desc: "Bahan dasar olahan keripik." },
+                    { name: "Bumbu Cabai & Rempah", type: "Penyedap/Aroma Alami", desc: "Ekstrak cabai, bawang merah, dan bawang putih." },
+                    { name: "Monosodium Glutamat (MSG)", type: "Penyedap Rasa Sintetis", desc: "Memperkuat cita rasa gurih umami pada keripik." },
+                    { name: "Bubuk Karamel", type: "Pewarna Alami", desc: "Memberikan nuansa kecokelatan yang menggugah selera." }
+                ]
+            },
+            strawberrywafer: {
+                title: "Wafer Krim Stroberi",
+                icon: "fa-cookie",
+                color: "text-pink-400",
+                ingredients: [
+                    { name: "Tepung Terigu & Mentega", type: "Bahan Utama Alami", desc: "Adonan wafer dan lembaran krim." },
+                    { name: "Perisa Sintetis Stroberi", type: "Pemberi Aroma Sintetis", desc: "Memberikan wangi harum stroberi yang kuat." },
+                    { name: "Pewarna Merah Ponseau 4R", type: "Pewarna Sintetis", desc: "Memberikan warna merah stroberi pada krim." },
+                    { name: "Gelatin / Pektin", type: "Pengental & Penstabil Alami", desc: "Menjaga tekstur krim agar tidak meleleh berlebihan." }
+                ]
+            },
+            chilisauce: {
+                title: "Saus Cabai Botol",
+                icon: "fa-prescription-bottle",
+                color: "text-galaxy-coral",
+                ingredients: [
+                    { name: "Cabai Merah & Bawang Putih", type: "Bahan Utama Alami", desc: "Sumber cita rasa pedas utama." },
+                    { name: "Tepung Maizena (Pati Jagung)", type: "Pengental Alami", desc: "Memberikan tekstur kental pas pada saus." },
+                    { name: "Kalium Sorbat", type: "Pengawet Sintetis", desc: "Mencegah pembusukan saus setelah botol dibuka." },
+                    { name: "Asam Sitrat", type: "Pengatur Keasaman / Pengawet Alami", desc: "Memberikan rasa segar asam sekaligus mengawetkan." }
+                ]
+            }
+        };
+
+        function selectLabProduct(prodKey) {
+            const data = LAB_PRODUCTS[prodKey];
+            const display = document.getElementById('lab-display');
+
+            let html = `
+                <div class="flex items-center space-x-3 mb-4">
+                    <i class="fa-solid ${data.icon} text-3xl ${data.color}"></i>
+                    <div>
+                        <h4 class="font-extrabold text-base text-white">${data.title}</h4>
+                        <p class="text-[11px] text-galaxy-cyan">Hasil Analisis Komposisi Laboratorium Pangan</p>
+                    </div>
+                </div>
+                <div class="space-y-3">
+            `;
+
+            data.ingredients.forEach(ing => {
+                html += `
+                    <div class="p-3 bg-galaxy-card rounded-xl border border-purple-800/40 space-y-1">
+                        <div class="flex justify-between items-center">
+                            <strong class="text-xs text-galaxy-gold">${ing.name}</strong>
+                            <span class="text-[10px] px-2 py-0.5 rounded-md bg-galaxy-purple/40 text-galaxy-cyan border border-galaxy-purple/60">${ing.type}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-300">${ing.desc}</p>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            display.innerHTML = html;
+        }
+
+        /* Organ Impact Inspector */
+        const ORGAN_INFO = {
+            brain: {
+                title: "Otak & Sistem Saraf Pusat",
+                desc: "Zat adiktif (seperti nikotin atau alkohol) mengganggu neurotransmiter otak. Akibatnya, terjadi penurunan konsentrasi, gangguan koordinasi motorik, ketergantungan psikologis, serta penurunan kemampuan mengambil keputusan sehat."
+            },
+            lungs: {
+                title: "Paru-Paru & Saluran Pernapasan",
+                desc: "Paparan asap rokok/vape memasukkan tar, nikotin, dan gas karbon monoksida. Hal ini merusak silia paru-paru, meningkatkan risiko bronchitis kronis, asma, serta kanker paru-paru."
+            },
+            heart: {
+                title: "Jantung & Pembuluh Darah",
+                desc: "Nikotin memicu pelepasan adrenalin yang memaksa jantung berdetak lebih cepat dan menyempitkan pembuluh darah, memicu hipertensi mendadak dan risiko stroke."
+            },
+            liver: {
+                title: "Hati / Liver",
+                desc: "Hati bertugas menetralisir racun. Konsumsi alkohol berkelanjutan membebankan kerja organ hati, menyebabkan peradangan sel hati hingga sirosis (kerusakan jaringan hati permanen)."
+            }
+        };
+
+        function inspectOrgan(organKey) {
+            const data = ORGAN_INFO[organKey];
+            const display = document.getElementById('organ-display');
+            display.innerHTML = `
+                <h4 class="font-bold text-sm text-galaxy-gold mb-1">${data.title}</h4>
+                <p class="text-xs text-slate-300 leading-relaxed">${data.desc}</p>
+            `;
+        }
+
+        function choosePeerScenario(optionNum) {
+            const feedback = document.getElementById('peer-feedback');
+            feedback.classList.remove('hidden');
+
+            if (optionNum === 2) {
+                feedback.className = "p-4 rounded-xl text-xs font-medium bg-galaxy-green/20 border border-galaxy-green/50 text-galaxy-green block";
+                feedback.innerHTML = "<strong>✅ Pilihan Sangat Tepat!</strong> Menolak dengan tegas dan sopan menunjukkan karakter yang kuat dan peduli pada kesehatan diri sendiri. Sahabat sejati akan menghargai keputusannmu!";
+            } else {
+                feedback.className = "p-4 rounded-xl text-xs font-medium bg-galaxy-coral/20 border border-galaxy-coral/50 text-galaxy-coral block";
+                feedback.innerHTML = "<strong>⚠️ Pilihan Berisiko!</strong> Mencoba sekali atau diam saja tetap membuka pintu menuju ketergantungan nikotin. Selalu tegaskan penolakan secara sehat!";
+            }
+        }
+
+
+        /* ================= PAGE 4: KUIS INTERAKTIF LOGIC ================= */
+        const QUIZ_QUESTIONS = [
+            {
+                q: "Zat yang sengaja ditambahkan ke dalam makanan selama pengolahan untuk memperbaiki warna, rasa, atau daya simpan disebut...",
+                options: ["Zat Adiktif", "Zat Aditif", "Zat Psikotropika", "Zat Suplemen"],
+                answer: 1,
+                explanation: "Zat aditif adalah bahan tambahan pangan untuk memelihara atau meningkatkan mutu rasa, warna, tekstur, dan keawetan makanan."
+            },
+            {
+                q: "Berikut ini yang merupakan contoh bahan pewarna alami adalah...",
+                options: ["Tartrazin", "Kunyit dan daun suji", "Amil asetat", "Natrium benzoat"],
+                answer: 1,
+                explanation: "Kunyit (memberi warna kuning) dan daun suji (hijau) berasal dari tumbuhan alami."
+            },
+            {
+                q: "Manakah pasangan zat aditif dan fungsinya yang BENAR?",
+                options: [
+                    "Natrium Benzoat — Pemanis sintetis",
+                    "Monosodium Glutamat (MSG) — Penyedap rasa",
+                    "Tartrazin — Pengawet sintetis",
+                    "Aspartam — Pewarna alami"
+                ],
+                answer: 1,
+                explanation: "MSG (Monosodium Glutamat) berfungsi sebagai penyedap rasa umami pada masakan."
+            },
+            {
+                q: "Mengapa bahan aditif alami tidak selalu pasti lebih baik dari bahan sintetis?",
+                options: [
+                    "Bahan alami harganya jauh lebih murah",
+                    "Keamanan zat bergantung pada jenis, kadar kemurnian, dan takarannya",
+                    "Bahan sintetis tidak memiliki tanggal kedaluwarsa",
+                    "Bahan alami pasti mengandung zat racun"
+                ],
+                answer: 1,
+                explanation: "Keamanan pangan ditentukan oleh dosis (takaran) dan tingkat kemurnian, bukan sekadar status alami/sintetis."
+            },
+            {
+                q: "Zat aktif pada tembakau yang dapat menyebabkan ketergantungan dan mempercepat denyut jantung adalah...",
+                options: ["Tar", "Nikotin", "Karbon monoksida", "Alkohol"],
+                answer: 1,
+                explanation: "Nikotin adalah zat adiktif utama pada tembakau yang memicu ketergantungan dan memicu pemacingan adrenalin."
+            },
+            {
+                q: "Minuman beralkohol apabila dikonsumsi berlebihan dapat merusak organ metabolisme racun tubuh, yaitu...",
+                options: ["Paru-paru", "Hati (liver)", "Gendang telinga", "Tulang kering"],
+                answer: 1,
+                explanation: "Hati bertugas memetabolisme etanol alkohol; konsumsi berlebihan memicu sirosis hati."
+            },
+            {
+                q: "Zat aditif yang berfungsi menstabilkan emulsi dan mempertahankan tekstur kental pada saus atau es krim adalah...",
+                options: ["Pengental dan penstabil", "Pewarna sintetis", "Pemanis buatan", "Pemberi aroma"],
+                answer: 0,
+                explanation: "Pengental/penstabil (seperti gelatin atau maizena) menjaga konsistensi tekstur pangan."
+            },
+            {
+                q: "Tindakan yang paling tepat ketika diajak teman sebaya untuk mencoba merokok atau vape adalah...",
+                options: [
+                    "Menolaknya dengan tegas dan sopan, lalu memilih aktivitas sehat",
+                    "Mencobanya sedikit saja agar dianggap gaul",
+                    "Menyimpan rokok tersebut di kantong",
+                    "Mengejek balik teman tersebut"
+                ],
+                answer: 0,
+                explanation: "Menolak tegas dan sopan menunjukkan sikap bertanggung jawab menjaga kesehatan diri."
+            },
+            {
+                q: "Tujuan utama mencantumkan informasi komposisi bahan pada kemasan pangan adalah...",
+                options: [
+                    "Membuat produk terlihat mewah",
+                    "Membantu konsumen mengetahui kandungan isi produk secara bijak",
+                    "Menghabiskan ruang pada label",
+                    "Menurunkan harga jual"
+                ],
+                answer: 1,
+                explanation: "Label komposisi memberikan transparansi kandungan pangan agar konsumen dapat memilih dengan cermat."
+            },
+            {
+                q: "Zat adiktif bekerja mempengaruhi bagian organ utama manusia, yaitu...",
+                options: ["Sistem Saraf Pusat (Otak)", "Sistem Pencernaan Lambung", "Kelenjar Keringat", "Enzim Saliva"],
+                answer: 0,
+                explanation: "Zat adiktif mempengaruhi pelepasan neurotransmiter pada sistem saraf pusat dan otak."
+            }
+        ];
+
+        let currentQIndex = 0;
+        let currentQuizScore = 0;
+        let selectedOption = null;
+
+        function renderQuizQuestion() {
+            const qData = QUIZ_QUESTIONS[currentQIndex];
+            document.getElementById('quiz-step-title').innerText = `Soal ${currentQIndex + 1} dari ${QUIZ_QUESTIONS.length}`;
+            document.getElementById('quiz-score-badge').innerText = currentQuizScore;
+
+            document.getElementById('quiz-question-text').innerText = qData.q;
+            const optionsBox = document.getElementById('quiz-options-container');
+            optionsBox.innerHTML = '';
+
+            document.getElementById('quiz-explanation-box').classList.add('hidden');
+            const nextBtn = document.getElementById('quiz-next-btn');
+            nextBtn.disabled = true;
+            nextBtn.className = "px-6 py-3 bg-slate-700 text-slate-400 cursor-not-allowed font-bold text-xs rounded-xl transition-all";
+
+            selectedOption = null;
+
+            qData.options.forEach((optText, optIdx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-2xl border border-purple-900/60 hover:border-galaxy-cyan bg-galaxy-bg/60 font-medium text-xs md:text-sm text-slate-200 transition-all flex items-center justify-between";
+                btn.innerHTML = `
+                    <span>${String.fromCharCode(65 + optIdx)}. ${optText}</span>
+                    <div class="w-5 h-5 rounded-full border border-slate-600 flex items-center justify-center text-xs"></div>
+                `;
+                btn.onclick = () => handleAnswerSelect(optIdx, btn);
+                optionsBox.appendChild(btn);
+            });
+        }
+
+        function handleAnswerSelect(optIdx, btnElement) {
+            if (selectedOption !== null) return;
+            selectedOption = optIdx;
+
+            const qData = QUIZ_QUESTIONS[currentQIndex];
+            const isCorrect = optIdx === qData.answer;
+            const allBtns = document.getElementById('quiz-options-container').children;
+
+            if (isCorrect) {
+                currentQuizScore += 10;
+                document.getElementById('quiz-score-badge').innerText = currentQuizScore;
+                btnElement.className = "w-full text-left p-4 rounded-2xl border-2 border-galaxy-green bg-galaxy-green/20 font-bold text-xs md:text-sm text-white transition-all flex items-center justify-between";
+                document.getElementById('quiz-feedback-icon').innerText = '✅';
+                document.getElementById('quiz-feedback-text').innerText = 'Jawaban Tepat!';
+            } else {
+                btnElement.className = "w-full text-left p-4 rounded-2xl border-2 border-galaxy-coral bg-galaxy-coral/20 font-bold text-xs md:text-sm text-white transition-all flex items-center justify-between";
+                allBtns[qData.answer].className = "w-full text-left p-4 rounded-2xl border-2 border-galaxy-green bg-galaxy-green/20 font-bold text-xs md:text-sm text-white transition-all flex items-center justify-between";
+                document.getElementById('quiz-feedback-icon').innerText = '❌';
+                document.getElementById('quiz-feedback-text').innerText = 'Jawaban Kurang Tepat';
+            }
+
+            const expBox = document.getElementById('quiz-explanation-box');
+            document.getElementById('quiz-explanation-text').innerText = qData.explanation;
+            expBox.classList.remove('hidden');
+
+            const nextBtn = document.getElementById('quiz-next-btn');
+            nextBtn.disabled = false;
+            nextBtn.className = "px-6 py-3 bg-galaxy-cyan text-galaxy-bg font-extrabold text-xs rounded-xl shadow transition-all";
+        }
+
+        function nextQuestion() {
+            if (currentQIndex < QUIZ_QUESTIONS.length - 1) {
+                currentQIndex++;
+                renderQuizQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            document.getElementById('quiz-question-box').classList.add('hidden');
+            document.getElementById('quiz-header').classList.add('hidden');
+            const resBox = document.getElementById('quiz-result-box');
+            resBox.classList.remove('hidden');
+
+            const correctCount = currentQuizScore / 10;
+            const wrongCount = QUIZ_QUESTIONS.length - correctCount;
+
+            document.getElementById('res-score').innerText = currentQuizScore;
+            document.getElementById('res-correct').innerText = correctCount;
+            document.getElementById('res-wrong').innerText = wrongCount;
+
+            state.quizScore = Math.max(state.quizScore, currentQuizScore);
+            state.completedQuiz = true;
+            saveState();
+        }
+
+        function restartQuiz() {
+            currentQIndex = 0;
+            currentQuizScore = 0;
+            document.getElementById('quiz-result-box').classList.add('hidden');
+            document.getElementById('quiz-header').classList.remove('hidden');
+            document.getElementById('quiz-question-box').classList.remove('hidden');
+            renderQuizQuestion();
+        }
+
+
+        /* ================= PAGE 5: DRAG AND DROP GAMES ================= */
+        let activeGame = 1;
+        let selectedTouchCard = null;
+
+        function switchGame(gNum) {
+            activeGame = gNum;
+            document.getElementById('game-1').classList.add('hidden');
+            document.getElementById('game-2').classList.add('hidden');
+            document.getElementById('game-3').classList.add('hidden');
+
+            document.getElementById('gtab-1').className = "px-4 py-2 rounded-xl text-xs font-bold bg-galaxy-bg text-slate-400 hover:text-white transition-all shrink-0";
+            document.getElementById('gtab-2').className = "px-4 py-2 rounded-xl text-xs font-bold bg-galaxy-bg text-slate-400 hover:text-white transition-all shrink-0";
+            document.getElementById('gtab-3').className = "px-4 py-2 rounded-xl text-xs font-bold bg-galaxy-bg text-slate-400 hover:text-white transition-all shrink-0";
+
+            document.getElementById(`game-${gNum}`).classList.remove('hidden');
+            document.getElementById(`gtab-${gNum}`).className = "px-4 py-2 rounded-xl text-xs font-bold bg-galaxy-purple text-galaxy-gold transition-all shrink-0";
+        }
+
+        /* GAME 1: CATEGORIZE ADDITIVES */
+        const G1_ITEMS = [
+            { val: "Kunyit", cat: "pewarna" },
+            { val: "Tartrazin", cat: "pewarna" },
+            { val: "Gula Pasir", cat: "pemanis" },
+            { val: "Aspartam", cat: "pemanis" },
+            { val: "Garam Dapur", cat: "pengawet" },
+            { val: "Natrium Benzoat", cat: "pengawet" }
+        ];
+
+        function initGame1() {
+            const sources = document.getElementById('g1-sources');
+            sources.innerHTML = '';
+            document.querySelectorAll('#game-1 .card-container').forEach(c => c.innerHTML = '');
+
+            G1_ITEMS.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.id = `g1-card-${idx}`;
+                card.dataset.cat = item.cat;
+                card.draggable = true;
+                card.className = "draggable-item px-3 py-2 bg-galaxy-card border border-purple-800/60 text-white font-bold text-xs rounded-xl shadow-sm";
+                card.innerText = item.val;
+                card.onclick = () => handleTapSelect(card);
+                card.ondragstart = (e) => e.dataTransfer.setData('text/plain', card.id);
+                sources.appendChild(card);
+            });
+
+            document.querySelectorAll('#game-1 .drop-target').forEach(bin => {
+                bin.ondragover = (e) => { e.preventDefault(); bin.classList.add('highlight'); };
+                bin.ondragleave = () => bin.classList.remove('highlight');
+                bin.ondrop = (e) => {
+                    e.preventDefault();
+                    bin.classList.remove('highlight');
+                    const cardId = e.dataTransfer.getData('text/plain');
+                    const card = document.getElementById(cardId);
+                    if (card) bin.querySelector('.card-container').appendChild(card);
+                };
+                bin.onclick = () => handleTapPlace(bin.querySelector('.card-container'));
+            });
+        }
+
+        function checkGame1() {
+            let correct = 0;
+            document.querySelectorAll('#game-1 .drop-target').forEach(bin => {
+                const binType = bin.dataset.bin;
+                const cards = bin.querySelectorAll('.draggable-item');
+                cards.forEach(c => {
+                    if (c.dataset.cat === binType) correct++;
+                });
+            });
+
+            if (correct === G1_ITEMS.length) {
+                showToast('Luar biasa! Seluruh sampel aditif tepat dikelompokkan!', 'success');
+            } else {
+                showToast(`Baru ${correct} dari ${G1_ITEMS.length} yang benar. Coba lagi!`, 'error');
+            }
+        }
+
+        function resetGame1() { initGame1(); }
+
+
+        /* GAME 2: MATCH FUNCTIONS */
+        const G2_PAIRS = [
+            { name: "Pewarna", func: "Memperbaiki/memberi warna visual pangan" },
+            { name: "Pemanis", func: "Memberikan rasa manis produk" },
+            { name: "Pengawet", func: "Menghambat kebusukan oleh bakteri/jamur" },
+            { name: "Pengental", func: "Membentuk tekstur kental dan konsistensi emulsi" }
+        ];
+
+        function initGame2() {
+            const itemsCont = document.getElementById('g2-items');
+            const targetCont = document.getElementById('g2-targets');
+            itemsCont.innerHTML = '';
+            targetCont.innerHTML = '';
+
+            G2_PAIRS.forEach((pair, idx) => {
+                const card = document.createElement('div');
+                card.id = `g2-card-${idx}`;
+                card.dataset.val = pair.name;
+                card.draggable = true;
+                card.className = "draggable-item p-3 bg-galaxy-purple/40 border border-galaxy-purple text-galaxy-gold font-bold text-xs rounded-xl shadow";
+                card.innerText = `Bahan: ${pair.name}`;
+                card.onclick = () => handleTapSelect(card);
+                card.ondragstart = (e) => e.dataTransfer.setData('text/plain', card.id);
+                itemsCont.appendChild(card);
+
+                const slot = document.createElement('div');
+                slot.dataset.targetVal = pair.name;
+                slot.className = "drop-target p-3 bg-galaxy-bg border-2 border-dashed border-purple-900/60 rounded-xl min-h-[50px] flex items-center justify-between text-xs text-slate-300";
+                slot.innerHTML = `<span>${pair.func}</span>`;
+
+                slot.ondragover = (e) => { e.preventDefault(); slot.classList.add('highlight'); };
+                slot.ondragleave = () => slot.classList.remove('highlight');
+                slot.ondrop = (e) => {
+                    e.preventDefault();
+                    slot.classList.remove('highlight');
+                    const cardId = e.dataTransfer.getData('text/plain');
+                    const card = document.getElementById(cardId);
+                    if (card) slot.appendChild(card);
+                };
+                slot.onclick = () => handleTapPlace(slot);
+
+                targetCont.appendChild(slot);
+            });
+        }
+
+        function checkGame2() {
+            const slots = document.querySelectorAll('#g2-targets > div');
+            let correct = 0;
+            slots.forEach(s => {
+                const card = s.querySelector('.draggable-item');
+                if (card && card.dataset.val === s.dataset.targetVal) correct++;
+            });
+
+            if (correct === G2_PAIRS.length) {
+                showToast('Sempurna! Semua fungsi terpasangkan dengan tepat!', 'success');
+            } else {
+                showToast(`Baru ${correct} dari ${G2_PAIRS.length} pasangan yang tepat.`, 'error');
+            }
+        }
+
+        function resetGame2() { initGame2(); }
+
+
+        /* GAME 3: HEALTHY CHOICES */
+        const G3_ITEMS = [
+            { val: "Membaca komposisi label produk", cat: "sehat" },
+            { val: "Menolak tegas ajakan merokok/vape", cat: "sehat" },
+            { val: "Mengonsumsi obat medis tanpa resep dokter", cat: "bahaya" },
+            { val: "Mencoba rokok agar dianggap keren", cat: "bahaya" }
+        ];
+
+        function initGame3() {
+            const sources = document.getElementById('g3-sources');
+            sources.innerHTML = '';
+            document.querySelectorAll('#game-3 .card-container').forEach(c => c.innerHTML = '');
+
+            G3_ITEMS.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.id = `g3-card-${idx}`;
+                card.dataset.cat = item.cat;
+                card.draggable = true;
+                card.className = "draggable-item px-3 py-2 bg-galaxy-card border border-purple-800/60 text-white font-bold text-xs rounded-xl shadow-sm";
+                card.innerText = item.val;
+                card.onclick = () => handleTapSelect(card);
+                card.ondragstart = (e) => e.dataTransfer.setData('text/plain', card.id);
+                sources.appendChild(card);
+            });
+
+            document.querySelectorAll('#game-3 .drop-target').forEach(bin => {
+                bin.ondragover = (e) => { e.preventDefault(); bin.classList.add('highlight'); };
+                bin.ondragleave = () => bin.classList.remove('highlight');
+                bin.ondrop = (e) => {
+                    e.preventDefault();
+                    bin.classList.remove('highlight');
+                    const cardId = e.dataTransfer.getData('text/plain');
+                    const card = document.getElementById(cardId);
+                    if (card) bin.querySelector('.card-container').appendChild(card);
+                };
+                bin.onclick = () => handleTapPlace(bin.querySelector('.card-container'));
+            });
+        }
+
+        function checkGame3() {
+            let correct = 0;
+            document.querySelectorAll('#game-3 .drop-target').forEach(bin => {
+                const binType = bin.dataset.bin;
+                const cards = bin.querySelectorAll('.draggable-item');
+                cards.forEach(c => {
+                    if (c.dataset.cat === binType) correct++;
+                });
+            });
+
+            if (correct === G3_ITEMS.length) {
+                showToast('Hebat! Kamu paham mana pilihan sehat dan mana risiko bahaya!', 'success');
+            } else {
+                showToast(`Ada yang belum tepat. Periksa kembali pilihanmu!`, 'error');
+            }
+        }
+
+        function resetGame3() { initGame3(); }
+
+
+        /* Touch/Tap selection fallback for Mobile Devices */
+        function handleTapSelect(cardEl) {
+            if (selectedTouchCard) {
+                selectedTouchCard.classList.remove('ring-4', 'ring-galaxy-gold');
+            }
+            selectedTouchCard = cardEl;
+            cardEl.classList.add('ring-4', 'ring-galaxy-gold');
+            showToast('Kartu dipilih! Sentuh area tujuan untuk memindahkan.', 'info');
+        }
+
+        function handleTapPlace(targetEl) {
+            if (selectedTouchCard) {
+                targetEl.appendChild(selectedTouchCard);
+                selectedTouchCard.classList.remove('ring-4', 'ring-galaxy-gold');
+                selectedTouchCard = null;
+            }
+        }
+
+
+        /* ================= OVERALL PROGRESS TRACKER ================= */
+        function updateOverallProgress() {
+            const objCount = state.objectives.filter(Boolean).length;
+            const quizScore = state.quizScore;
+
+            const objPercent = (objCount / OBJECTIVES_DATA.length) * 50;
+            const quizPercent = (quizScore / 100) * 50;
+
+            const totalProgress = Math.round(objPercent + quizPercent);
+
+            document.getElementById('sidebar-progress-text').innerText = `${totalProgress}%`;
+            document.getElementById('sidebar-progress-bar').style.width = `${totalProgress}%`;
+
+            let badge = 'Kadet Sains Antariksa';
+            if (totalProgress >= 80) badge = '🏆 Penjaga Kesehatan Galaksi';
+            else if (totalProgress >= 50) badge = '⭐ Detektif Zat & Pangan';
+            else if (totalProgress >= 20) badge = '📘 Penjelajah Sains Aktif';
+
+            document.getElementById('sidebar-badge-status').innerText = `Status: ${badge}`;
+        }
+
+        function confirmResetAll() {
+            if (confirm('Apakah kamu yakin ingin mengapus seluruh progres belajar dan skor kuis?')) {
+                localStorage.removeItem('science_galaxy_state');
+                state = { ...DEFAULT_STATE };
+                saveState();
+                renderObjectives();
+                restartQuiz();
+                showToast('Seluruh progres telah direset ke awal.');
+            }
+        }
+
+
+        /* ================= INITIALIZATION ================= */
+        window.onload = function() {
+            renderObjectives();
+            selectLabProduct('juicymango');
+            inspectOrgan('brain');
+
+            renderQuizQuestion();
+
+            initGame1();
+            initGame2();
+            initGame3();
+
+            updateOverallProgress();
+
+            navigateTo(state.activeTab || 'home');
+        };
+    </script>
+</body>
+</html>
